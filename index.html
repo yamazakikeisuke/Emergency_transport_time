@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>全国消防本部別 救急搬送 所要時間マップ（令和4〜6年平均）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 100%; height: 100%; overflow: hidden; }
+fire-dash { position: fixed; inset: 0; }
+
+#loading {
+  position: fixed; inset: 0; z-index: 9999;
+  background: #f7f6f3;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 20px;
+  font-family: "Noto Sans JP", sans-serif;
+  transition: opacity .4s ease;
+}
+#loading.fade-out { opacity: 0; pointer-events: none; }
+.ld-title {
+  font-size: 15px; font-weight: 700; color: #2a2e3a;
+  letter-spacing: .02em; text-align: center; line-height: 1.5;
+}
+.ld-sub {
+  font-size: 12px; color: #888; margin-top: -12px;
+}
+.ld-bar {
+  width: 200px; height: 3px;
+  background: #e8e6e1; border-radius: 2px; overflow: hidden;
+}
+.ld-bar-inner {
+  height: 100%; width: 0%; background: #4a6a94; border-radius: 2px;
+  animation: ld-progress 2.4s cubic-bezier(.4,0,.2,1) forwards;
+}
+@keyframes ld-progress {
+  0%   { width: 0% }
+  40%  { width: 60% }
+  80%  { width: 85% }
+  100% { width: 95% }
+}
+</style>
+</head>
+<body>
+
+<div id="loading">
+  <div class="ld-title">全国消防本部別<br>救急搬送 所要時間マップ</div>
+  <div class="ld-bar"><div class="ld-bar-inner"></div></div>
+  <div class="ld-sub">地図データを読み込んでいます…</div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="fire_geo.geojson.js"></script>
+<script src="dash.js"></script>
+<fire-dash></fire-dash>
+<script>
+// fire-dash の build() 完了を検知してローディングを消す
+const _loading = document.getElementById('loading');
+const _dash = document.querySelector('fire-dash');
+const _observer = new MutationObserver(() => {
+  if (_dash.querySelector('.fd')) {
+    _loading.classList.add('fade-out');
+    setTimeout(() => _loading.remove(), 450);
+    _observer.disconnect();
+  }
+});
+_observer.observe(_dash, { childList: true, subtree: true });
+// フォールバック: 5秒後に強制非表示
+setTimeout(() => { _loading.classList.add('fade-out'); setTimeout(() => _loading.remove(), 450); }, 5000);
+</script>
+</body>
+</html>
