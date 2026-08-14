@@ -372,7 +372,28 @@ fire-dash{display:block;width:100%;height:100%;flex:1 1 auto;min-width:0}
     buildSheet() {
       const sheet = el('div', 'fd-sheet'); this.sheet = sheet;
       const grip = el('div', 'fd-grip', '<i></i>');
-      grip.onclick = () => this.toggleSheet();
+      // タップで開閉 + 上下スワイプで開閉
+      let _py = null, _moved = false;
+      grip.addEventListener('pointerdown', e => {
+        _py = e.clientY; _moved = false;
+        grip.setPointerCapture(e.pointerId);
+      });
+      grip.addEventListener('pointermove', e => {
+        if (_py === null) return;
+        if (Math.abs(e.clientY - _py) > 8) _moved = true;
+      });
+      grip.addEventListener('pointerup', e => {
+        if (_py === null) return;
+        const dy = e.clientY - _py;
+        _py = null;
+        if (_moved) {
+          // 上スワイプ → 開く、下スワイプ → 閉じる
+          this.toggleSheet(dy < 0 ? true : false);
+        } else {
+          this.toggleSheet();
+        }
+        _moved = false;
+      });
       sheet.appendChild(grip);
 
       this.info = el('div', 'fd-mhead');
