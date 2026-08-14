@@ -372,27 +372,44 @@ fire-dash{display:block;width:100%;height:100%;flex:1 1 auto;min-width:0}
     buildSheet() {
       const sheet = el('div', 'fd-sheet'); this.sheet = sheet;
       const grip = el('div', 'fd-grip', '<i></i>');
-      // タップで開閉 + 上下スワイプで開閉
-      let _py = null, _moved = false;
+      let _startY = null, _startH = null, _dragging = false;
+      const CLOSED_H = 186, MIN_H = 80, MAX_H_RATIO = 0.75;
+
       grip.addEventListener('pointerdown', e => {
-        _py = e.clientY; _moved = false;
+        _startY = e.clientY;
+        _startH = this.sheet.offsetHeight;
+        _dragging = false;
         grip.setPointerCapture(e.pointerId);
+        this.sheet.style.transition = 'none'; // ドラッグ中はアニメーション無効
       });
+
       grip.addEventListener('pointermove', e => {
-        if (_py === null) return;
-        if (Math.abs(e.clientY - _py) > 8) _moved = true;
+        if (_startY === null) return;
+        const dy = _startY - e.clientY; // 上方向が正
+        if (Math.abs(dy) > 4) _dragging = true;
+        if (!_dragging) return;
+        const maxH = window.innerHeight * MAX_H_RATIO;
+        const newH = Math.max(MIN_H, Math.min(maxH, _startH + dy));
+        this.sheet.style.height = newH + 'px';
       });
+
       grip.addEventListener('pointerup', e => {
-        if (_py === null) return;
-        const dy = e.clientY - _py;
-        _py = null;
-        if (_moved) {
-          // 上スワイプ → 開く、下スワイプ → 閉じる
-          this.toggleSheet(dy < 0 ? true : false);
-        } else {
+        if (_startY === null) return;
+        this.sheet.style.transition = ''; // アニメーション再有効化
+        const dy = _startY - e.clientY;
+        _startY = null;
+
+        if (!_dragging) {
+          // タップ → トグル
           this.toggleSheet();
+        } else {
+          // スワイプ: 現在の高さで開閉を確定
+          const maxH = window.innerHeight * MAX_H_RATIO;
+          const cur = this.sheet.offsetHeight;
+          const open = cur > CLOSED_H * 1.1 || dy > 40;
+          this.toggleSheet(open);
         }
-        _moved = false;
+        _dragging = false;
       });
       sheet.appendChild(grip);
 
