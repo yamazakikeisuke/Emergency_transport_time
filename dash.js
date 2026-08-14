@@ -86,7 +86,7 @@ fire-dash{display:block;width:100%;height:100%;flex:1 1 auto;min-width:0}
  border-top:1px solid var(--line);border-radius:16px 16px 0 0;box-shadow:0 -8px 26px oklch(0.2 0.02 250 / .13);
  display:flex;flex-direction:column;height:186px;transition:height .28s cubic-bezier(.32,.72,0,1)}
 .fd-sheet[data-open="1"]{height:70%}
-.fd-grip{flex:none;padding:9px 0 5px;display:flex;justify-content:center;cursor:pointer;touch-action:none}
+.fd-grip{flex:none;padding:16px 0 14px;display:flex;justify-content:center;cursor:pointer;touch-action:none}
 .fd-grip i{display:block;width:40px;height:4px;border-radius:2px;background:oklch(0.85 0.008 250)}
 .fd-mhead{flex:none;padding:2px var(--pad) 11px;display:flex;align-items:flex-start;gap:12px}
 .fd-mhead .txt{flex:1;min-width:0}
