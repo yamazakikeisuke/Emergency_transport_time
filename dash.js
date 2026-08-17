@@ -209,7 +209,7 @@ fire-dash{display:block;width:100%;height:100%;flex:1 1 auto;min-width:0}
       const left = el('div');
       left.appendChild(el('h1', 'fd-ttl', '全国消防本部別　救急搬送 所要時間マップ'));
       left.appendChild(el('div', 'fd-sub',
-        '<b>令和4〜6年（2022〜2024年）平均</b><span>全国 719 消防本部</span><span>出典：総務省消防庁「救急・救助の現況」</span>'));
+        '<b>令和4〜6年（2022〜2024年）平均</b><span>全国 719 消防本部</span><span>出典：総務省消防庁「救急業務のあり方に関する検討会」資料</span>'));
       hd.appendChild(left);
       this.seg = el('div', 'fd-seg');
       METRICS.forEach(m => {
